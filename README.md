@@ -2,7 +2,7 @@
 
 Run docker-compose up and it should install below : (Make sure docker service is running)
 - DynamoDB Local | runs on port 8000
-- Flask Application server | runs on port 5000
+- Flask Application server | runs on port 5100
 
 Then run below Curl commands to perform CRUD Operations:
 
