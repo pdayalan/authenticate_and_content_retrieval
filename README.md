@@ -1,6 +1,6 @@
 # authenticate_and_content_retrieval
 
-Run docker-compose up and it should install below : 
+Run docker-compose up and it should install below : (Make sure docker service is running)
 - DynamoDB Local | runs on port 8000
 - Flask Application server | runs on port 5000
 
