@@ -1,15 +1,15 @@
-import boto3, os
+import boto3
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
 # Disable AWS credentials check
-os.environ['AWS_ACCESS_KEY_ID'] = ''
-os.environ['AWS_SECRET_ACCESS_KEY'] = ''
+# os.environ['AWS_ACCESS_KEY_ID'] = ''
+# os.environ['AWS_SECRET_ACCESS_KEY'] = ''
 
 # Initialize DynamoDB client
-# dynamodb = boto3.resource('dynamodb', region_name='', endpoint_url='http://127.0.0.1:8000', aws_access_key_id='dummy', aws_secret_access_key='dummy')
-dynamodb = boto3.resource('dynamodb', region_name='', endpoint_url='http://127.0.0.1:8000')
+dynamodb = boto3.resource('dynamodb', region_name='', endpoint_url='http://127.0.0.1:8000', aws_access_key_id='dummy', aws_secret_access_key='dummy')
+# dynamodb = boto3.resource('dynamodb', region_name='', endpoint_url='http://127.0.0.1:8000')
 table_name = 'Users'
 table = dynamodb.Table(table_name)
 
