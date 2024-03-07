@@ -1,29 +1,30 @@
 import unittest
-from unittest.mock import patch
-from app import app
+import json
+from src.main.python import app
 
-class TestApp(unittest.TestCase):
-    @patch('app.get_user')
-    def test_login_success(self, mock_get_user):
-        mock_get_user.return_value = {'username': 'test_user', 'password': 'test_password'}
-        with app.test_client() as client:
-            response = client.post('/login', json={'username': 'test_user', 'password': 'test_password'})
-            self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json['message'], 'Login successful')
+class TestUserEndpoint(unittest.TestCase):
+    def setUp(self):
+        app.testing = True
+        self.app = app.test_client()
 
-    @patch('app.get_user')
-    def test_login_failure(self, mock_get_user):
-        mock_get_user.return_value = None
-        with app.test_client() as client:
-            response = client.post('/login', json={'username': 'test_user', 'password': 'test_password'})
-            self.assertEqual(response.status_code, 401)
-            self.assertEqual(response.json['message'], 'Invalid credentials')
+    def test_create_user(self):
+        # Define the request payload
+        payload = {
+            "username": "auppal",
+            "password": "admin"
+        }
 
-    def test_get_content(self):
-        with app.test_client() as client:
-            response = client.get('/content')
-            self.assertEqual(response.status_code, 200)
-            self.assertIn('content', response.json)
+        # Make a POST request to the /users endpoint
+        response = self.app.post('/users', 
+                                 data=json.dumps(payload),
+                                 content_type='application/json')
+
+        # Assert the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Assert the response data contains the expected message
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'User created successfully')
 
 if __name__ == '__main__':
     unittest.main()

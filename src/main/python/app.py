@@ -9,15 +9,10 @@ app = Flask(__name__)
 region = 'ap-south-1'  # Replace 'your_region' with your AWS region
 dynamodb = boto3.client('dynamodb', region_name=region)
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table_name = 'Users'
-table_arn = 'arn:aws:dynamodb:ap-south-1:123630172817:table/Users' + table_name 
-table = dynamodb.Table(table_name)
-
 # Create table if not exists
 def create_table():
-    if not dynamodb.Table(table_name).table_status == 'ACTIVE':
+    table_name = 'Users'
+    if not dynamodb.describe_table(TableName=table_name).get('Table', {}).get('TableStatus') == 'ACTIVE':
         table = dynamodb.create_table(
             TableName=table_name,
             KeySchema=[
@@ -46,7 +41,7 @@ def create_table():
             }
         )
         # Wait for table to become active
-        while dynamodb.Table(table_name).table_status != 'ACTIVE':
+        while dynamodb.describe_table(TableName=table_name).get('Table', {}).get('TableStatus') != 'ACTIVE':
             time.sleep(1)
         print("Table created successfully.")
 
@@ -59,37 +54,88 @@ def hash_password(password):
 # CRUD Operations
 def create_user(username, password):
     hashed_password = hash_password(password)
-    response = table.put_item(Item={'username': username, 'password': hashed_password})
+    response = dynamodb.put_item(
+        TableName='Users',
+        Item={'username': {'S': username}, 'password': {'S': hashed_password}}
+    )
     return response
 
 def get_user(username):
-    response = table.get_item(Key={'username': username})
+    response = dynamodb.get_item(
+        TableName='Users',
+        Key={'username': {'S': username}}
+    )
     return response.get('Item')
 
 def update_user(username, password):
     hashed_password = hash_password(password)
-    response = table.update_item(
-        Key={'username': username},
+    response = dynamodb.update_item(
+        TableName='Users',
+        Key={'username': {'S': username}},
         UpdateExpression='SET password = :val1',
-        ExpressionAttributeValues={':val1': hashed_password},
+        ExpressionAttributeValues={':val1': {'S': hashed_password}},
         ReturnValues='UPDATED_NEW'
     )
     return response
 
 def delete_user(username):
-    response = table.delete_item(Key={'username': username})
+    response = dynamodb.delete_item(
+        TableName='Users',
+        Key={'username': {'S': username}}
+    )
     return response
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        user = get_user(username)
+        if user and user.get('password', {}).get('S') == hash_password(password):
+            return jsonify({"message": "Login successful"})
+        else:
+            return jsonify({"message": "Invalid credentials"}), 401
+    else:
+        # Handle GET request, if needed
+        return jsonify({"message": "GET request received"})
+
+@app.route('/users', methods=['POST'])
+def create_new_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    user = get_user(username)
-    if user and user.get('password') == hash_password(password):
-        return jsonify({"message": "Login successful"})
+    response = create_user(username, password)
+    if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
+        return jsonify({"message": "User created successfully"})
     else:
-        return jsonify({"message": "Invalid credentials"}), 401
+        return jsonify({"message": "Failed to create user"}), 500
+
+@app.route('/users/<username>', methods=['GET'])
+def get_user_info(username):
+    user = get_user(username)
+    if user:
+        return jsonify(user)
+    else:
+        return jsonify({"message": "User not found"}), 404
+
+@app.route('/users/<username>', methods=['PUT'])
+def update_user_info(username):
+    data = request.get_json()
+    password = data.get('password')
+    response = update_user(username, password)
+    if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
+        return jsonify({"message": "User updated successfully"})
+    else:
+        return jsonify({"message": "Failed to update user"}), 500
+
+@app.route('/users/<username>', methods=['DELETE'])
+def delete_user_info(username):
+    response = delete_user(username)
+    if response.get('ResponseMetadata', {}).get('HTTPStatusCode') == 200:
+        return jsonify({"message": "User deleted successfully"})
+    else:
+        return jsonify({"message": "Failed to delete user"}), 500
 
 @app.route('/content', methods=['GET'])
 def get_content():
@@ -97,4 +143,4 @@ def get_content():
     return jsonify({"content": "This is some sample content"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
