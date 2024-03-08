@@ -6,13 +6,15 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Initialize Boto3 client for DynamoDB
-region = 'ap-south-1'  # Replace 'your_region' with your AWS region
-dynamodb = boto3.client('dynamodb', region_name=region)
+REGION = 'ap-south-1'  # Replace 'your_region' with your AWS region
+dynamodb = boto3.client('dynamodb', region_name=REGION)
 
 # Create table if not exists
 def create_table():
     table_name = 'Users'
-    if not dynamodb.describe_table(TableName=table_name).get('Table', {}).get('TableStatus') == 'ACTIVE':
+    try:
+        dynamodb.describe_table(TableName=table_name)
+    except dynamodb.exceptions.ResourceNotFoundException:
         table = dynamodb.create_table(
             TableName=table_name,
             KeySchema=[
