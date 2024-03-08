@@ -38,7 +38,8 @@ def create_table():
             ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
         )
         # Wait for table to become active
-        while dynamodb.describe_table(TableName=table_name).get('Table', {}).get('TableStatus') != 'ACTIVE':
+        table_status = dynamodb.describe_table(TableName=table_name).get('Table', {}).get('TableStatus')
+        while table_status != 'ACTIVE':
             time.sleep(1)
         print("Table created successfully.")
 
