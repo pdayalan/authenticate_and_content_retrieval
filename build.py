@@ -22,4 +22,4 @@ default_task = "publish"
 
 @init
 def set_properties(project):
-    project.build_depends_on("flask", "boto3")  # Using string arguments instead of a list
+    project.build_depends_on(['flask', 'boto3>=1.18.0'])  # Adjust the version as per your requirement
