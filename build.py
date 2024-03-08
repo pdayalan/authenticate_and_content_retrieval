@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from pybuilder.core import use_plugin, init
 
 use_plugin("python.core")
@@ -7,7 +6,6 @@ use_plugin("python.flake8")
 use_plugin("python.coverage")
 use_plugin("python.distutils")
 use_plugin("python.install_dependencies")
-
 
 name = "authenticate_and_content_retrieval"
 version = "0.1"
@@ -19,7 +17,6 @@ license = "MIT"
 
 default_task = "publish"
 
-
 @init
 def set_properties(project):
-    project.build_depends_on(['flask', 'boto3>=1.18.0'])  # Adjust the version as per your requirement
+    project.build_depends_on(["flask", "boto3>=1.18.0"])
