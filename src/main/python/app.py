@@ -1,7 +1,14 @@
+"""
+This module implements a Flask application for user management with DynamoDB.
+"""
+
 import time
 import hashlib
-import boto3
-from flask import Flask, request, jsonify
+try:
+    import boto3
+    from flask import Flask, request, jsonify
+except ImportError as e:
+    print(f"Error importing required modules: {e}")
 
 app = Flask(__name__)
 
