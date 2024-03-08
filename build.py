@@ -19,4 +19,4 @@ default_task = "publish"
 
 @init
 def set_properties(project):
-    project.build_depends_on(["flask", "boto3>=1.18.0"])
+    project.build_depends_on(["flask"])
