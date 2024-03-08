@@ -21,29 +21,14 @@ def create_table():
         dynamodb.create_table(
             TableName=table_name,
             KeySchema=[
-                {
-                    'AttributeName': 'username',
-                    'KeyType': 'HASH'  # Partition key
-                },
-                {
-                    'AttributeName': 'password',
-                    'KeyType': 'RANGE'  # Sort key
-                }
+                {'AttributeName': 'username', 'KeyType': 'HASH'},  # Partition key
+                {'AttributeName': 'password', 'KeyType': 'RANGE'}  # Sort key
             ],
             AttributeDefinitions=[
-                {
-                    'AttributeName': 'username',
-                    'AttributeType': 'S'
-                },
-                {
-                    'AttributeName': 'password',
-                    'AttributeType': 'S'
-                }
+                {'AttributeName': 'username', 'AttributeType': 'S'},
+                {'AttributeName': 'password', 'AttributeType': 'S'}
             ],
-            ProvisionedThroughput={
-                'ReadCapacityUnits': 5,
-                'WriteCapacityUnits': 5
-            }
+            ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5}
         )
         # Wait for table to become active
         while dynamodb.describe_table(TableName=table_name).get('Table', {}).get('TableStatus') != 'ACTIVE':
