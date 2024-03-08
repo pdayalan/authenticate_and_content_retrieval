@@ -1,4 +1,4 @@
-#   -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from pybuilder.core import use_plugin, init
 
 use_plugin("python.core")
@@ -13,7 +13,7 @@ name = "authenticate_and_content_retrieval"
 version = "0.1"
 summary = "Simple Web Application"
 description = "A simple web application using Flask"
-authors = [Author("Anirudh Uppal", "anirudh.uppal@gmail.com")]
+authors = ["Anirudh Uppal <anirudh.uppal@gmail.com>"]
 url = "https://github.com/anuppal/authenticate_and_content_retrieval"
 license = "MIT"
 
@@ -22,4 +22,4 @@ default_task = "publish"
 
 @init
 def set_properties(project):
-    project.build_depends_on('flask', 'boto3')
+    project.build_depends_on(['flask', 'boto3'])
