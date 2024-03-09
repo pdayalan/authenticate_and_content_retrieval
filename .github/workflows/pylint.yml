@@ -3,10 +3,10 @@ name: Pylint and Build/Test
 on: 
   push:
     branches:
-      - master
+      - Project-A
   pull_request:
     branches:
-      - master
+      - Project-A
 
 jobs:
   lint:
