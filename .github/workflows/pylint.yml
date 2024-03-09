@@ -10,17 +10,17 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install pylint
         run: |
@@ -32,18 +32,18 @@ jobs:
           pylint src/main/python/app.py
 
   build_and_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu
     
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       - name: Install PyBuilder
         run: |
