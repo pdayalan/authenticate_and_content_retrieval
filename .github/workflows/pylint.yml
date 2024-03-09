@@ -3,22 +3,22 @@ name: Pylint and Build/Test
 on: 
   push:
     branches:
-      - Project-A
+      - master
   pull_request:
     branches:
-      - Project-A
+      - master
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           node-version: '20'
       
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.11
 
@@ -36,12 +36,12 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           node-version: '20'
       
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.11
 
